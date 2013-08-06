@@ -50,14 +50,6 @@ class Curl{
                 $url = Yii::app()->params['cheking_url'];
             }
         }
-
-        // проверка на заполнение всех параметров для формирования полноценног json запроса
-//        Curl::is_empty($url, 'URL адрес для отправки запроса ');
-//        Curl::is_empty($textID, 'ID задания ');
-//        Curl::is_empty($import_var_id, 'ID поля из задания ');
-//        Curl::is_empty($type_check, 'Тип проверки ');
-//        Curl::is_empty($key_words, 'Ключевые слова ');
-//        Curl::is_empty($type_check, 'Тип проверки ');
         // инициализация переменных класса, для формирования массива на отправку
         $this->url = $url;
         $this->text_id = $textID;
@@ -78,8 +70,6 @@ class Curl{
                 $array_data = $this->create_data();
             }
 
-            file_put_contents('curl.txt',$this->url.'-url|'.json_encode($array_data));
-
             //уcтанавливаем урл, к которому обратимся
             curl_setopt($curl, CURLOPT_URL, $this->url);
             //включаем вывод заголовков
@@ -94,35 +84,14 @@ class Curl{
             curl_setopt($curl, CURLOPT_USERAGENT, 'Opera 10.00');
             $res = curl_exec($curl);
 
-            //file_put_contents('result_.txt', $res);
-
             //проверяем, если ошибка, то получаем номер и сообщение
             if(!$res){
                 $result = curl_error($curl).'('.curl_errno($curl).')';
-                //return $result;
             }else{
                 $result = json_decode($res, true);
             }
 
-            //file_put_contents('result.txt', print_r($result));
-            //die();
-//                //если не ошибка, то выводим результат
-//            else{
-//                die('Error in curl request:'.$res);
-//            }
-
             curl_close($curl);
-
-            // если необходимо записать в лог ошибок, полученную ошибку, то ЗАПИШИМ!
-//            if($this->write_log && $result['result']=='fail'){
-//                $log = new LogCheking();
-//                $log->text_id = $this->text_id;
-//                $log->import_var_id = $this->field_id;
-//                $log->import_var_value = $this->$this->text;
-//                $log->error = $result['errorcode'];
-//                $log->check_id = $this->type_check;
-//                $log->save();
-//            }
 
             return $result;
         }else{
